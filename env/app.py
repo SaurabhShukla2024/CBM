@@ -7,16 +7,17 @@ app.config['SQLALCHEMY_DATABASE_URI'] =  'sqlite:///test.db'
 db = SQLAlchemy(app)
 
 class Admin(db.Model):
-	admin_id = db.Column(db.Integer, primary_key=True)
+	id = db.Column(db.Integer, primary_key=True)
 	admin = db.Column(db.String(200), nullable=False)
 	password = db.Column(db.String(200), nullable=False)
+	bots = db.relationship('ChatBot', backref = 'owner')
 
 	def __repr__(self):
 		return '<Task %r>' % self.id
 
 
 class User(db.Model):
-	user_id = db.Column(db.Integer, primary_key=True)
+	id = db.Column(db.Integer, primary_key=True)
 	user = db.Column(db.String(200), nullable=False)
 	password = db.Column(db.String(200), nullable=False)
 
@@ -24,9 +25,10 @@ class User(db.Model):
 		return '<Task %r>' % self.id
 
 class ChatBot(db.Model):
-	chatbot_id = db.Column(db.Integer, primary_key=True)
-	user = db.Column(db.String(200), nullable=False)
-	password = db.Column(db.String(200), nullable=False)
+	id = db.Column(db.Integer, primary_key=True)
+	bot = db.Column(db.String(200), nullable=False)
+	owner_id = db.Column(db.Integer, db.ForeignKey('admin.id'))
+
 
 	def __repr__(self):
 		return '<Task %r>' % self.id
