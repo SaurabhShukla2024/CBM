@@ -37,37 +37,12 @@ class ChatBot(db.Model):
 
 def index():
 
-	# if request.method == 'POST':
-	# 	task_content = request.form['content']
-	# 	new_task = Todo(content=task_content)
-
-	# 	try:
-	# 		db.session.add(new_task)
-	# 		db.session.commit()
-
-	# 		return redirect('/')
-
-	# 	except:
-	# 		return 'Database Error'
-
-	# else:
-
-	# 	tasks = Todo.query.order_by(Todo.date_created).all()
-
 		return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 
 def login():
-	# task_to_delete = Todo.query.get_or_404(id)
 
-	# try:
-	# 	db.session.delete(task_to_delete)
-	# 	db.session.commit()
-
-	# 	return redirect('/')
-
-	# except:
 	if request.method == 'POST':
 		if request.form['usertype'] == 'admin':
 			admin = Admin.query.filter_by(admin=request.form['username']).first()
@@ -94,26 +69,15 @@ def login():
 
 def signup():
 
-	# task = Todo.query.get_or_404(id)
-
-	# if request.method == 'POST':
-	# 	task.content = request.form['content']
-	# 	try:
-	# 		db.session.commit()
-	# 		return redirect('/')
-	# 	except:
-	# 		return "Update Error"
-	# else:
-
 	if request.method == 'POST':
 		if request.form['usertype'] == 'admin':
 			admin = request.form['username']
 			pwd = request.form['password']
 			repwd = request.form['repassword']
-			if pwd == repwd:
+			if pwd == repwd and admin!=Admin.query.filter_by(admin=admin).first().admin:
 				newAdmin = Admin(admin=admin, password=pwd)
 			else:
-				return "both passwords are different"
+				return "both passwords are different or username taken"
 
 			try:
 				db.session.add(newAdmin)
@@ -128,10 +92,10 @@ def signup():
 			user = request.form['username']
 			pwd = request.form['password']
 			repwd = request.form['repassword']
-			if pwd == repwd:
+			if pwd == repwd and user!=User.query.filter_by(user=user).first().user:
 				newUser = User(user=user, password=pwd)
 			else:
-				return "both passwords are different"
+				return "both passwords are different or username taken"
 
 			try:
 				db.session.add(newAdmin)
@@ -143,6 +107,18 @@ def signup():
 				return 'Database Error'
 	else:
 		return render_template('signup.html')
+
+@app.route('/admin', methods=['GET', 'POST'])
+
+def admin():
+
+	return render_template('admin.html')
+
+@app.route('/user', methods=['GET', 'POST'])
+
+def user():
+
+	return render_template('user.html')
 
 
 
