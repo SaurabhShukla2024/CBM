@@ -2,7 +2,7 @@
 
 {% block head %}
 
-<title>ChatBot Maker Login</title>
+<title>ChatBot Maker Sign Up</title>
 
 {% endblock %}
 
@@ -10,10 +10,10 @@
 
 <div class="content">
 
-	<h1>Login</h1>
+	<h1>Sign Up</h1>
 	
 
-	<form action="/login" method="POST">
+	<form action="/signup" method="POST">
 		<br>User Type: <select name="usertype" id="usertype">
 
 			<option value = "admin">Admin</option>
@@ -22,7 +22,8 @@
 		</select>
 		<br>Username<input type="text" name="username" id="username">
 		<br>Password<input type="password" name="password" id="password">
-		<br><input type="submit" value="Login"><a href="/signup">Sign up</a>
+		<br>Password<input type="password" name="repassword" id="repassword">
+		<br><input type="submit" value="Sign Up"><a href="/index">Sign up</a>
 
 	</form>
 
