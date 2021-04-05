@@ -150,11 +150,7 @@
 	 "responses": ["lift is not working, projector misfuctioning"],
 	 "context": [""]
 	},
-	 {"tag": "gadgets",
-	 "patterns": ["what are the gadgets in stock?","which products we have?"],
-	 "responses": ["hardisk,pendrives, wireless bluetooth,Laptops,Gaming Accessories"],
-	 "context": [""]
-	},
+	
 {"tag": "commission",
 	 "patterns": ["what is the Commission rate?","Commission rate on each product?"],
 	 "responses": ["Commission rate is 5% on laptops,25%on bluetooth device,10% on Desktop"],
