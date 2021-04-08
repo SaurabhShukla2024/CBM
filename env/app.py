@@ -10,7 +10,6 @@ class Admin(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	admin = db.Column(db.String(200), nullable=False)
 	password = db.Column(db.String(200), nullable=False)
-	bots = db.relationship('ChatBot', backref = 'owner')
 
 	def __repr__(self):
 		return '<Task %r>' % self.id
@@ -27,8 +26,7 @@ class User(db.Model):
 class ChatBot(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	bot = db.Column(db.String(200), nullable=False)
-	owner_id = db.Column(db.Integer, db.ForeignKey('admin.id'))
-
+	date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
 	def __repr__(self):
 		return '<Task %r>' % self.id
@@ -111,8 +109,24 @@ def signup():
 @app.route('/admin', methods=['GET', 'POST'])
 
 def admin():
+	if request.method == 'POST':
+		bot_name = request.form['botName']
+		botName = ChatBot(bot=bot_name)
 
-	return render_template('admin.html')
+		try:
+			db.session.add(botName)
+			db.session.commit()
+
+			return redirect('/createbot')
+
+		except:
+			return 'Database Error'
+
+	else:
+
+		bots = ChatBot.query.order_by(ChatBot.date_created).all()
+
+		return render_template('admin.html', bots=bots)
 
 @app.route('/user', methods=['GET', 'POST'])
 
@@ -120,6 +134,24 @@ def user():
 
 	return render_template('user.html')
 
+@app.route('/createbot', methods=['GET', 'POST'])
+
+def createbot():
+	if request.method == 'POST':
+		
+		try:
+			
+
+			return redirect('/createbot')
+
+		except:
+			return 'Database Error'
+
+	else:
+
+		
+
+		return render_template('createbot.html')
 
 
 	
