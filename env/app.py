@@ -1,6 +1,10 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import shutil
+from flask import Flask,jsonify,json
+
+
 
 app =  Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] =  'sqlite:///test.db'
@@ -72,7 +76,7 @@ def signup():
 			admin = request.form['username']
 			pwd = request.form['password']
 			repwd = request.form['repassword']
-			if pwd == repwd and admin!=Admin.query.filter_by(admin=admin).first().admin:
+			if pwd == repwd and admin!=Admin.query.filter_by(admin=admin).first():
 				newAdmin = Admin(admin=admin, password=pwd)
 			else:
 				return "both passwords are different or username taken"
@@ -114,13 +118,15 @@ def admin():
 		botName = ChatBot(bot=bot_name)
 
 		try:
+
+			shutil.copytree('baseCB', bot_name)
 			db.session.add(botName)
 			db.session.commit()
 
-			return redirect('/createbot')
+			return render_template('createbot,html', bot_name=bot_name)
 
 		except:
-			return 'Database Error'
+			return 'Dat'
 
 	else:
 
