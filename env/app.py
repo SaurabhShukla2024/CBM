@@ -46,15 +46,20 @@ def index():
 def login():
 
 	if request.method == 'POST':
-		if request.form['usertype'] == 'admin':
-			admin = Admin.query.filter_by(admin=request.form['username']).first()
-			password = Admin.query.filter_by(password=request.form['password']).first()
-			if admin.id==password.id:
-				return redirect('/admin')
-			else:
-				return "incorrect username password pair"
+		if request.form['usertype'] == "admin":
+			adminv = Admin.query.filter_by(admin=request.form['username']).first()
+			passwordv = Admin.query.filter_by(password=request.form['password']).first()
+			try:	
+				
+				if adminv.id==passwordv.id:
+					bots = ChatBot.query.order_by(ChatBot.date_created).all()
+					return render_template('admin.html', bots=bots)
+				else:
+					return "incorrect username password pair"
+			except:
+				return "incorrect UP pair"
 
-		elif request.form['usertype'] == 'user':
+		elif request.form['usertype'] == "user":
 			user = User.query.filter_by(user=request.form['username']).first()
 			password = User.query.filter_by(password=request.form['password']).first()
 			if user.id==password.id:
@@ -123,7 +128,7 @@ def admin():
 			db.session.add(botName)
 			db.session.commit()
 
-			return render_template('createbot,html', bot_name=bot_name)
+			return render_template('createbot.html', bot_name=bot_name)
 
 		except:
 			return 'Dat'

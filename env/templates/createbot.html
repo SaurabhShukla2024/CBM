@@ -2,15 +2,31 @@
 
 {% block head %}
 
-<title>ChatBot Maker Login</title>
+<title>Configure Bot</title>
 
 {% endblock %}
 
 {% block body %}
 
-<div >
+<div class="content">
 
-edit intents json
+	<h1>Configure Bot</h1>
+	
+	<form action="/addintent" method="POST" id="botform">
+
+		<br>Tag: <input type="text" id="tag" name="tag">
+		<br>Pattern: <textarea type="text" form="botform" name="pattern" id="pattern"></textarea>
+		<br>Response: <textarea type="text" form="botform" name="response" id="respone"></textarea>
+		<br>Context: <textarea type="text" form="botform" name="context" id="context"></textarea>
+		<br><input type="submit" value="Add Intent">
+
+	</form>
+
+	<form action="/createbot" method="POST">
+
+		<br><input type="submit" value="Create Bot">
+
+	</form>
 
 </div>
 
