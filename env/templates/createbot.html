@@ -12,11 +12,23 @@
 
 	<h1>Configure Bot</h1>
 	
-	<form action="/addintent" method="POST" id="botform">
+	<form action="/addintent/{{data}}" method="POST" id="botform">
 
 		<br>Tag: <input type="text" id="tag" name="tag">
-		<br>Pattern: <textarea type="text" form="botform" name="pattern" id="pattern"></textarea>
-		<br>Response: <textarea type="text" form="botform" name="response" id="respone"></textarea>
+		
+		<br>Pattern: <textarea type="text" form="botform" name="pattern1" id="pattern1></textarea>
+		<br><textarea type="text" form="botform" name="pattern2" id="pattern2"></textarea>
+		<br><textarea type="text" form="botform" name="pattern3" id="pattern3"></textarea>
+		<br><textarea type="text" form="botform" name="pattern4" id="pattern4"></textarea>
+		<br><textarea type="text" form="botform" name="pattern5" id="pattern5"></textarea>
+		
+		
+		<br>Response: <textarea type="text" form="botform" name="response1" id="respone1"></textarea>
+		<br><textarea type="text" form="botform" name="response2" id="respone2"></textarea>
+		<br><textarea type="text" form="botform" name="response3" id="respone3"></textarea>
+		<br><textarea type="text" form="botform" name="response4" id="respone4"></textarea>
+		<br><textarea type="text" form="botform" name="response5" id="respone5"></textarea>
+		
 		<br>Context: <textarea type="text" form="botform" name="context" id="context"></textarea>
 		<br><input type="submit" value="Add Intent">
 

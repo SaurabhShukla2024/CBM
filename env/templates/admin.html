@@ -11,6 +11,16 @@
 <div>
 
 	<h1>Make Bot</h1>
+	
+	<form action="/admin" method="POST">
+
+		<input type="text" name="botName" id="botName">
+		<input type="submit" value="Add Bot">
+
+	</form>
+	<br>
+	<br>
+
 	{% if bots|length < 1 %}
 	<h4>Create a Bots</h4>
 	{%else%}
@@ -35,14 +45,6 @@
 
 	</table>
 	{%endif%}
-
-	<form action="/admin" method="POST">
-
-		<input type="text" name="botName" id="botName">
-		<input type="submit" value="Add Bot">
-
-	</form>
-
 </div>
 
 {% endblock %} 

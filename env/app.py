@@ -128,7 +128,11 @@ def admin():
 			db.session.add(botName)
 			db.session.commit()
 
-			return render_template('createbot.html', bot_name=bot_name)
+
+			data = {}
+			data["intents"]=[]
+
+			return render_template('createbot.html', bot_name=bot_name, data=data)
 
 		except:
 			return 'Dat'
@@ -160,10 +164,26 @@ def createbot():
 
 	else:
 
-		
+		data = {}
+		data["intents"]=[]
 
-		return render_template('createbot.html')
+		return render_template('createbot.html',data=data)
 
+@app.route('/addintent/<data>', methods=['GET', 'POST'])
+
+def addintent(data):
+	if request.method == 'POST':
+
+		# data['intents'].append({"tag":[request.form["tag"]] ,
+	 	# 	"patterns" : [request.form["pattern1"], request.form["pattern2"], request.form["pattern3"], request.form["pattern4"], request.form["pattern5"]],
+	 	# 	"responses": [request.form["response1"], request.form["response2"], request.form["response3"], request.form["response4"], request.form["response5"]],
+	 	# 	"context": [request.form["context"]]
+		#  })
+		return request.form
+
+	else:
+
+		return "intents"
 
 	
 
