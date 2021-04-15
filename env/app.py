@@ -130,9 +130,11 @@ def admin():
 
 
 			data = {}
-			data["intents"]=[]
+			data['intents']=[]
 
-			return render_template('createbot.html', bot_name=bot_name, data=data)
+			pack=json.dumps(data)
+
+			return render_template('createbot.html', bot_name=bot_name, pack=pack)
 
 		except:
 			return 'Dat'
@@ -169,18 +171,19 @@ def createbot():
 
 		return render_template('createbot.html',data=data)
 
-@app.route('/addintent/<data>', methods=['GET', 'POST'])
+@app.route('/addintent/<pack>/<bot_name>', methods=['GET', 'POST'])
 
-def addintent(data):
+def addintent(pack, bot_name):
 	if request.method == 'POST':
+		data=json.loads(pack)
+		data['intents'].append({"tag":request.form["tag"] ,
+	 		"patterns" : [request.form["pattern1"], request.form["pattern2"], request.form["pattern3"], request.form["pattern4"], request.form["pattern5"]],
+	 		"responses": [request.form["response1"], request.form["response2"], request.form["response3"], request.form["response4"], request.form["response5"]],
+	 		"context": [request.form["context"]]
+		 })
 
-		# data['intents'].append({"tag":[request.form["tag"]] ,
-	 	# 	"patterns" : [request.form["pattern1"], request.form["pattern2"], request.form["pattern3"], request.form["pattern4"], request.form["pattern5"]],
-	 	# 	"responses": [request.form["response1"], request.form["response2"], request.form["response3"], request.form["response4"], request.form["response5"]],
-	 	# 	"context": [request.form["context"]]
-		#  })
-		return request.form
-
+		pack=json.dumps(data)
+		return render_template('createbot.html', bot_name=bot_name, pack=pack)
 	else:
 
 		return "intents"
