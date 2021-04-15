@@ -151,15 +151,19 @@ def user():
 
 	return render_template('user.html')
 
-@app.route('/createbot', methods=['GET', 'POST'])
+@app.route('/createbot/<pack>/<bot_name>', methods=['GET', 'POST'])
 
-def createbot():
+def createbot(pack, bot_name):
 	if request.method == 'POST':
 		
 		try:
+			data=json.loads(pack)
+			fileName=bot_name+"/intents.json"
+			with open(fileName, 'w') as outfile:
+    				json.dump(data, outfile)
 			
 
-			return redirect('/createbot')
+			return redirect('/')
 
 		except:
 			return 'Database Error'
