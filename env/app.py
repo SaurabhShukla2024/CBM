@@ -247,7 +247,7 @@ def createbot(pack, bot_name):
 
 		
 
-		return "Woops Page"
+		return render_template("error.html")
 
 @app.route('/addintent/<pack>/<bot_name>', methods=['GET', 'POST'])
 def addintent(pack, bot_name):
