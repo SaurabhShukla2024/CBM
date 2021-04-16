@@ -4,7 +4,84 @@ from datetime import datetime
 import shutil
 from flask import Flask,jsonify,json
 import os
+import nltk
+from nltk.stem import WordNetLemmatizer
+lemmatizer = WordNetLemmatizer()
+import pickle
+import numpy as np
+from keras.models import load_model
+import random
 
+
+def clean_up_sentence(sentence, bot_name):
+    intents = json.loads(open(bot_name+'/intents.json').read())
+    words = pickle.load(open(bot_name+'/words.pkl','rb'))
+    classes = pickle.load(open(bot_name+'/classes.pkl','rb'))
+    model = load_model(bot_name+'/chatbot_model.h5')
+    # tokenize the pattern - split words into array
+    sentence_words = nltk.word_tokenize(sentence)
+    # stem each word - create short form for word
+    sentence_words = [lemmatizer.lemmatize(word.lower()) for word in sentence_words]
+    return sentence_words
+
+# return bag of words array: 0 or 1 for each word in the bag that exists in the sentence
+
+def bow(sentence, words, bot_name, show_details=True):
+    intents = json.loads(open(bot_name+'/intents.json').read())
+    words = pickle.load(open(bot_name+'/words.pkl','rb'))
+    classes = pickle.load(open(bot_name+'/classes.pkl','rb'))
+    model = load_model(bot_name+'/chatbot_model.h5')
+    # tokenize the pattern
+    sentence_words = clean_up_sentence(sentence, bot_name)
+    # bag of words - matrix of N words, vocabulary matrix
+    bag = [0]*len(words)  
+    for s in sentence_words:
+        for i,w in enumerate(words):
+            if w == s: 
+                # assign 1 if current word is in the vocabulary position
+                bag[i] = 1
+                if show_details:
+                    print ("found in bag: %s" % w)
+    return(np.array(bag))
+
+def predict_class(sentence, model, bot_name):
+    intents = json.loads(open(bot_name+'/intents.json').read())
+    words = pickle.load(open(bot_name+'/words.pkl','rb'))
+    classes = pickle.load(open(bot_name+'/classes.pkl','rb'))
+    model = load_model(bot_name+'/chatbot_model.h5')
+    # filter out predictions below a threshold
+    p = bow(sentence, words, bot_name, show_details=False)
+    res = model.predict(np.array([p]))[0]
+    ERROR_THRESHOLD = 0.25
+    results = [[i,r] for i,r in enumerate(res) if r>ERROR_THRESHOLD]
+    # sort by strength of probability
+    results.sort(key=lambda x: x[1], reverse=True)
+    return_list = []
+    for r in results:
+        return_list.append({"intent": classes[r[0]], "probability": str(r[1])})
+    return return_list
+
+def getResponse(ints, intents_json, bot_name):
+    intents = json.loads(open(bot_name+'/intents.json').read())
+    words = pickle.load(open(bot_name+'/words.pkl','rb'))
+    classes = pickle.load(open(bot_name+'/classes.pkl','rb'))
+    model = load_model(bot_name+'/chatbot_model.h5')
+    tag = ints[0]['intent']
+    list_of_intents = intents_json['intents']
+    for i in list_of_intents:
+        if(i['tag']== tag):
+            result = random.choice(i['responses'])
+            break
+    return result
+
+def chatbot_response(msg,bot_name):
+    intents = json.loads(open(bot_name+'/intents.json').read())
+    words = pickle.load(open(bot_name+'/words.pkl','rb'))
+    classes = pickle.load(open(bot_name+'/classes.pkl','rb'))
+    model = load_model(bot_name+'/chatbot_model.h5')
+    ints = predict_class(msg, model, bot_name)
+    res = getResponse(ints, intents, bot_name)
+    return res
 
 
 app =  Flask(__name__)
@@ -36,13 +113,11 @@ class ChatBot(db.Model):
 		return '<Task %r>' % self.id
 
 @app.route('/')
-
 def index():
 
 		return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
-
 def login():
 
 	if request.method == 'POST':
@@ -71,9 +146,7 @@ def login():
 	else:
 		return render_template('login.html')
 
-
 @app.route('/signup', methods=['GET', 'POST'])
-
 def signup():
 
 	if request.method == 'POST':
@@ -116,7 +189,6 @@ def signup():
 		return render_template('signup.html')
 
 @app.route('/admin', methods=['GET', 'POST'])
-
 def admin():
 	if request.method == 'POST':
 		bot_name = request.form['botName']
@@ -146,14 +218,12 @@ def admin():
 		return render_template('admin.html', bots=bots)
 
 @app.route('/user', methods=['GET', 'POST'])
-
 def user():
 	bots = ChatBot.query.order_by(ChatBot.date_created).all()
 
 	return render_template('user.html', bots=bots)
 
 @app.route('/createbot/<pack>/<bot_name>', methods=['GET', 'POST'])
-
 def createbot(pack, bot_name):
 	if request.method == 'POST':
 		
@@ -166,9 +236,9 @@ def createbot(pack, bot_name):
 			exec = "python3 "+bot_name+"/train_chatbot.py"
 
 			os.system('python3 tmp/CopyPasteFolderTest.py')
-			
+			bots = ChatBot.query.order_by(ChatBot.date_created).all()
 
-			return "Bot Created, pls wait few mins before bot gets activated"
+			return render_template('admin.html', bots=bots)
 
 		except:
 			return 'Database Error'
@@ -177,10 +247,9 @@ def createbot(pack, bot_name):
 
 		
 
-		return "Woops PAge"
+		return "Woops Page"
 
 @app.route('/addintent/<pack>/<bot_name>', methods=['GET', 'POST'])
-
 def addintent(pack, bot_name):
 	if request.method == 'POST':
 		data=json.loads(pack)
@@ -196,7 +265,31 @@ def addintent(pack, bot_name):
 
 		return "intents"
 
+@app.route('/viewbot/<bot_name>')
+def viewbot(bot_name):
 	
+
+	chatLog=" "
+
+	return render_template("viewbot.html", bot_name=bot_name, chatLog=chatLog)
+
+@app.route('/chatbot/<bot_name>/<chatLog>', methods=['GET', 'POST'])
+def chatbot(bot_name,chatLog):
+	if request.method == 'POST':
+		msg = request.form['msg']
+		res = chatbot_response(msg, bot_name)
+
+		chatLog=chatLog +"You: "+msg+"<br>Bot: "+res+"<br>"
+
+		return render_template("viewbot.html", bot_name=bot_name, chatLog=chatLog)
+		
+
+	else:
+
+		
+		chatLog=""
+		return render_template("viewbot.html", bot_name=bot_name, chatLog=chatLog)
+
 
 if __name__ == "__main__":
 	app.run(debug=True)

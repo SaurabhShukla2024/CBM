@@ -1,0 +1,25 @@
+{% extends 'base.html'%}
+
+{% block head %}
+
+<title>ChatBot</title>
+
+{% endblock %}
+
+{% block body %}
+
+<h3>{{bot_name}}</h3>
+<div>
+	<div>
+	{{chatLog|safe}}
+	</div>	
+	<form action="/chatbot/{{bot_name}}/{{chatLog}}" method="POST">
+
+		<input type="text" id="msg" name="msg">
+		<input type="submit" value="Send">
+
+	</form>
+	
+</div>
+
+{% endblock %} 

@@ -30,6 +30,7 @@
 
 			<th>Bots</th>
 			<th>creation Date</th>
+			<th>View Bot</th>
 			
 		</tr>
 
@@ -38,6 +39,7 @@
 
 			<td>{{bot.bot}}</td>
 			<td>{{bot.date_created}}</td>
+			<td><a href="/viewbot/{{bot.bot}}">View</a></td>
 
 		</tr>
 		{% endfor %}
