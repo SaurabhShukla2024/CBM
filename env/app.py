@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import shutil
 from flask import Flask,jsonify,json
+import os
 
 
 
@@ -17,7 +18,6 @@ class Admin(db.Model):
 
 	def __repr__(self):
 		return '<Task %r>' % self.id
-
 
 class User(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -99,13 +99,13 @@ def signup():
 			user = request.form['username']
 			pwd = request.form['password']
 			repwd = request.form['repassword']
-			if pwd == repwd and user!=User.query.filter_by(user=user).first().user:
+			if pwd == repwd and user!=User.query.filter_by(user=user).first():
 				newUser = User(user=user, password=pwd)
 			else:
 				return "both passwords are different or username taken"
 
 			try:
-				db.session.add(newAdmin)
+				db.session.add(newUser)
 				db.session.commit()
 
 				return redirect('/login')
@@ -148,8 +148,9 @@ def admin():
 @app.route('/user', methods=['GET', 'POST'])
 
 def user():
+	bots = ChatBot.query.order_by(ChatBot.date_created).all()
 
-	return render_template('user.html')
+	return render_template('user.html', bots=bots)
 
 @app.route('/createbot/<pack>/<bot_name>', methods=['GET', 'POST'])
 
@@ -161,19 +162,22 @@ def createbot(pack, bot_name):
 			fileName=bot_name+"/intents.json"
 			with open(fileName, 'w') as outfile:
     				json.dump(data, outfile)
+
+			exec = "python3 "+bot_name+"/train_chatbot.py"
+
+			os.system('python3 tmp/CopyPasteFolderTest.py')
 			
 
-			return redirect('/')
+			return "Bot Created, pls wait few mins before bot gets activated"
 
 		except:
 			return 'Database Error'
 
 	else:
 
-		data = {}
-		data["intents"]=[]
+		
 
-		return render_template('createbot.html',data=data)
+		return "Woops PAge"
 
 @app.route('/addintent/<pack>/<bot_name>', methods=['GET', 'POST'])
 

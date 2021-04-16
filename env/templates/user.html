@@ -1,0 +1,41 @@
+{% extends 'base.html'%}
+
+{% block head %}
+
+<title>ChatBot Maker User</title>
+
+{% endblock %}
+
+{% block body %}
+
+<div>
+
+
+
+	{% if bots|length < 1 %}
+	<h4>View Bots a Bots</h4>
+	{%else%}
+	<table>
+
+		<tr>
+
+			<th>Bots</th>
+			<th>creation Date</th>
+			
+		</tr>
+
+		{% for bot in bots %}
+		<tr>
+
+			<td>{{bot.bot}}</td>
+			<td>{{bot.date_created}}</td>
+
+		</tr>
+		{% endfor %}
+
+
+	</table>
+	{%endif%}
+</div>
+
+{% endblock %} 
